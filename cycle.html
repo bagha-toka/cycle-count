@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cycling Day Tracker (Cyberpunk Neon)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      /* Initial radial gradient using neon color */
+      background: radial-gradient(circle at 50% 50%, #000 0%, #ff0080 100%);
+    }
+
+    .container {
+      position: relative;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      overflow: hidden;
+    }
+
+    /* Pseudo-element for animated neon border */
+    .container::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #ff0080, #00ffff, #00ff80, #ff8000, #ff00ff, #ff0080);
+      background-size: 400%;
+      z-index: -1;
+      filter: blur(8px);
+      animation: gradientAnimation 5s ease infinite;
+      border-radius: 12px;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      color: #ff0080;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      text-shadow: 0 0 5px #ff0080, 0 0 10px #ff0080;
+      /* Add transition for smooth color and text-shadow change */
+      transition: color 1.5s ease, text-shadow 1.5s ease;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    #dayNumber {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.5rem;
+      color: #ff0080;
+      /* Add transition for smooth color change */
+      transition: color 1.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cycling Day Tracker</h1>
+    <p>Today's day of cycling is day <span id="dayNumber"></span></p>
+  </div>
+
+  <script>
+    // Calculate and display the day count
+    document.addEventListener('DOMContentLoaded', function() {
+      const startDate = new Date('2025-03-08');
+      const today = new Date();
+      const diffInMs = today - startDate;
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+      const dayNumber = diffInDays + 1;
+      document.getElementById('dayNumber').textContent = dayNumber;
+    });
+
+    // Array of neon colors to cycle through
+    const neonColors = ['#ff0080', '#00ffff', '#00ff80', '#ff8000', '#ff00ff'];
+    let currentIndex = 0;
+    let currentNeonColor = neonColors[0];
+
+    // Update text colors based on the current neon color
+    function updateNeonColors() {
+      currentNeonColor = neonColors[currentIndex];
+      
+      const h1 = document.querySelector('h1');
+      h1.style.color = currentNeonColor;
+      h1.style.textShadow = `0 0 5px ${currentNeonColor}, 0 0 10px ${currentNeonColor}`;
+      
+      const dayNumberElem = document.getElementById('dayNumber');
+      dayNumberElem.style.color = currentNeonColor;
+      
+      currentIndex = (currentIndex + 1) % neonColors.length;
+    }
+    // Change text colors every 1.5 seconds
+    setInterval(updateNeonColors, 1500);
+
+    // Smooth background movement based on mouse pointer
+    let currentX = 50, currentY = 50;
+    let targetX = 50, targetY = 50;
+    document.addEventListener('mousemove', function(e) {
+      targetX = (e.clientX / window.innerWidth) * 100;
+      targetY = (e.clientY / window.innerHeight) * 100;
+    });
+
+    function animateBackground() {
+      // Easing effect
+      currentX += (targetX - currentX) * 0.05;
+      currentY += (targetY - currentY) * 0.05;
+      // Update background gradient using the current neon color
+      document.body.style.background = `radial-gradient(circle at ${currentX}% ${currentY}%, #000 0%, ${currentNeonColor} 100%)`;
+      requestAnimationFrame(animateBackground);
+    }
+    animateBackground();
+  </script>
+</body>
+</html>
